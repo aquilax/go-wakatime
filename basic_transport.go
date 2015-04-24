@@ -18,6 +18,8 @@ func NewBasicTransport(apiKey string) *BasicTransport {
 func (bt *BasicTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	req = cloneRequest(req)
 	req.Header.Set("Authorization", "Basic "+bt.apiKey)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", "go-wakatime/"+Version)
 
 	// Make the HTTP request.
 	return bt.transport().RoundTrip(req)
