@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-const ApiBase = "http://api"
+const ApiBase = "https://wakatime.com/api/v1/"
 const CurrentUser = "current"
 
 type WakaTime struct {
