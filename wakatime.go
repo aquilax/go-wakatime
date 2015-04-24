@@ -6,18 +6,34 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 )
 
 const Version = "0.1"
 const ApiBase = "https://wakatime.com/api/v1/"
 const CurrentUser = "current"
+const NsInS = 1000000000
+
+type Time time.Time
 
 type WakaTime struct {
 	client *http.Client
 }
 
-type Durations struct{}
+type DurationsData struct {
+	Duration Time
+	Project  string
+	Time     Time
+}
+
+type Durations struct {
+	Branches []string
+	Data     []DurationsData
+	End      Time
+	Start    Time
+	TimeZone string `json:"timezone"`
+}
 
 func NewWakaTime(rt http.RoundTripper) *WakaTime {
 	return &WakaTime{
@@ -54,9 +70,10 @@ func (wt *WakaTime) Durations(user string, date time.Time, project, branches *st
 	}
 	fmt.Println(string(content))
 	var dr Durations
-	if err = json.Unmarshal(content, dr); err != nil {
+	if err = json.Unmarshal(content, &dr); err != nil {
 		return nil, err
 	}
+	fmt.Printf("%x", dr)
 	return &dr, nil
 }
 
@@ -68,4 +85,15 @@ func (wt *WakaTime) Users() {}
 
 func (wt *WakaTime) getURL(path string) string {
 	return ApiBase + path
+}
+
+func (ut *Time) UnmarshalJSON(data []byte) error {
+	ts, err := strconv.ParseFloat(string(data), 32)
+	if err != nil {
+		return err
+	}
+	sec := int64(ts)
+	ns := int64((ts - float64(sec)) * NsInS)
+	*ut = Time(time.Unix(int64(sec), ns))
+	return nil
 }
