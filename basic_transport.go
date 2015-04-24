@@ -1,23 +1,24 @@
 package wakatime
 
 import (
+	"encoding/base64"
 	"net/http"
 )
 
 type BasicTransport struct {
-	apiKey    string
-	Transport http.RoundTripper
+	encodedApiKey string
+	Transport     http.RoundTripper
 }
 
 func NewBasicTransport(apiKey string) *BasicTransport {
 	return &BasicTransport{
-		apiKey: apiKey,
+		encodedApiKey: base64.StdEncoding.EncodeToString([]byte(apiKey)),
 	}
 }
 
 func (bt *BasicTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	req = cloneRequest(req)
-	req.Header.Set("Authorization", "Basic "+bt.apiKey)
+	req.Header.Set("Authorization", "Basic "+bt.encodedApiKey)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "go-wakatime/"+Version)
 
