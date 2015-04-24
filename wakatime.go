@@ -1,14 +1,19 @@
 package wakatime
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"net/http"
 )
 
 const ApiBase = "http://api"
+const CurrentUser = "current"
 
 type WakaTime struct {
 	client *http.Client
 }
+
+type Durations struct{}
 
 func NewWakaTime(tr *http.Transport) *WakaTime {
 	return &WakaTime{
@@ -18,8 +23,22 @@ func NewWakaTime(tr *http.Transport) *WakaTime {
 	}
 }
 
-func (wt *WakaTime) Durations() {
-	_, _ = wt.fetch("/durations")
+func (wt *WakaTime) Durations(user string) (*Durations, error) {
+	var err error
+	var resp *http.Response
+	if resp, err = wt.fetch("users/" + user + "/durations"); err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	var content []byte
+	if content, err = ioutil.ReadAll(resp.Body); err != nil {
+		return nil, err
+	}
+	var dr Durations
+	if err = json.Unmarshal(content, dr); err != nil {
+		return nil, err
+	}
+	return &dr, nil
 }
 
 func (wt *WakaTime) Stats() {}
