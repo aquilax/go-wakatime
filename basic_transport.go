@@ -15,26 +15,26 @@ type BasicTransport struct {
 // NewBasicTransport creates new BasicTransport given the API key
 func NewBasicTransport(apiKey string) *BasicTransport {
 	return &BasicTransport{
-		encodedApiKey: base64.StdEncoding.EncodeToString([]byte(apiKey)),
+		encodedAPIKey: base64.StdEncoding.EncodeToString([]byte(apiKey)),
+		Transport:     http.DefaultTransport,
 	}
+}
+
+func (bt *BasicTransport) addHeaders(req *http.Request) *http.Request {
+	req = cloneRequest(req)
+	req.Header.Set("Authorization", "Basic "+bt.encodedAPIKey)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("User-Agent", getUserAgent())
+	return req
 }
 
 // RoundTrip implements the http.RoundTripper method
 func (bt *BasicTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	req = cloneRequest(req)
-	req.Header.Set("Authorization", "Basic "+bt.encodedAPIKey)
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", "go-wakatime/"+Version)
-
-	// Make the HTTP request.
-	return bt.transport().RoundTrip(req)
+	return bt.Transport.RoundTrip(bt.addHeaders(req))
 }
 
-func (bt *BasicTransport) transport() http.RoundTripper {
-	if bt.Transport != nil {
-		return bt.Transport
-	}
-	return http.DefaultTransport
+func getUserAgent() string {
+	return "go-wakatime/" + Version
 }
 
 // cloneRequest returns a clone of the provided *http.Request.

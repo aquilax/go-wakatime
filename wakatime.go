@@ -180,10 +180,6 @@ func (wt *WakaTime) Summaries() {}
 // Users fetches the users report
 func (wt *WakaTime) Users() {}
 
-func (wt *WakaTime) getURL(path string) string {
-	return ApiBase + path
-}
-
 // UnmarshalJSON unmarshals the Time type
 func (ut *Time) UnmarshalJSON(data []byte) error {
 	ts, err := strconv.ParseFloat(string(data), 32)
@@ -191,7 +187,7 @@ func (ut *Time) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	sec := int64(ts)
-	ns := int64((ts - float64(sec)) * time.Second)
+	ns := int64((ts - float64(sec)) * float64(time.Second))
 	*ut = Time(time.Unix(int64(sec), ns))
 	return nil
 }
