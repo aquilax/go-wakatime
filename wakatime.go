@@ -19,6 +19,8 @@ const APIBase = "https://wakatime.com/api/v1/"
 // CurrentUser replaces the current user in the request
 const CurrentUser = "current"
 
+const dateFormat = "01/02/2006"
+
 // Range is the stats report interval range
 type Range string
 
@@ -107,6 +109,50 @@ type Stats struct {
 	Data StatsData
 }
 
+type SummaryGrandTotal struct {
+	Digital      string
+	Hours        int
+	Minutes      int
+	Seconds      int
+	Text         string
+	TotalSeconds int
+}
+
+type SummaryItem struct {
+	SummaryGrandTotal
+	Name    string
+	Percent float32
+}
+
+type SummaryEditor SummaryItem
+type SummaryLanguage SummaryItem
+type SummaryOperatingSystem SummaryItem
+type SummaryProject SummaryItem
+
+type SumaryRange struct {
+	Date      string
+	DateHuman string
+	End       Time
+	Start     Time
+	Text      string
+	Timezone  string
+}
+
+type SummariesData struct {
+	Editors          []SummaryEditor
+	GrandTotal       SummaryGrandTotal
+	Languages        []SummaryLanguage
+	OperatingSystems []SummaryOperatingSystem
+	Projects         []SummaryProject
+	Range            SumaryRange
+}
+
+type Summaries struct {
+	Data  []SummariesData
+	End   Time
+	Start Time
+}
+
 // New initializes the library
 func New(rt http.RoundTripper) *WakaTime {
 	return &WakaTime{
@@ -125,7 +171,7 @@ func (wt *WakaTime) Durations(user string, date time.Time, project, branches *st
 	}
 	u.Path += "users/" + user + "/durations"
 	q := u.Query()
-	q.Set("date", date.Format("01/02/2006"))
+	q.Set("date", date.Format(dateFormat))
 	if project != nil {
 		q.Set("project", *project)
 	}
@@ -175,7 +221,33 @@ func (wt *WakaTime) Stats(user string, rng Range, timeout *int, writesOnly *bool
 }
 
 // Summaries fetches the summaries report
-func (wt *WakaTime) Summaries() {}
+func (wt *WakaTime) Summaries(user string, start, end time.Time, project, branches *string) (*Summaries, error) {
+	var err error
+	var u *url.URL
+	if u, err = url.Parse(APIBase); err != nil {
+		return nil, err
+	}
+	u.Path += "users/" + user + "/summaries"
+	q := u.Query()
+	q.Set("start", start.Format(dateFormat))
+	q.Set("end", start.Format(dateFormat))
+	if project != nil {
+		q.Set("project", *project)
+	}
+	if branches != nil {
+		q.Set("branches", *branches)
+	}
+	u.RawQuery = q.Encode()
+	var content []byte
+	if content, err = wt.fetchURL(u.String()); err != nil {
+		return nil, err
+	}
+	var sm Summaries
+	if err = json.Unmarshal(content, &sm); err != nil {
+		return nil, err
+	}
+	return &sm, nil
+}
 
 // Users fetches the users report
 func (wt *WakaTime) Users() {}
