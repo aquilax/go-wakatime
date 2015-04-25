@@ -5,20 +5,24 @@ import (
 	"net/http"
 )
 
+// BasicTransport implements http.RoundTripper and provides authentication using
+// the Basic Auth mechanism
 type BasicTransport struct {
-	encodedApiKey string
+	encodedAPIKey string
 	Transport     http.RoundTripper
 }
 
+// NewBasicTransport creates new BasicTransport given the API key
 func NewBasicTransport(apiKey string) *BasicTransport {
 	return &BasicTransport{
 		encodedApiKey: base64.StdEncoding.EncodeToString([]byte(apiKey)),
 	}
 }
 
+// RoundTrip implements the http.RoundTripper method
 func (bt *BasicTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	req = cloneRequest(req)
-	req.Header.Set("Authorization", "Basic "+bt.encodedApiKey)
+	req.Header.Set("Authorization", "Basic "+bt.encodedAPIKey)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("User-Agent", "go-wakatime/"+Version)
 
