@@ -153,6 +153,32 @@ type Summaries struct {
 	Start Time
 }
 
+type UserData struct {
+	Created              time.Time
+	Email                string
+	EmailPublic          bool
+	FullName             string
+	HumanReadableWebsite string
+	ID                   string
+	LastHeartbeat        time.Time
+	LastPlugin           string
+	LastPluginName       string
+	LastProject          string
+	Location             string
+	LoggedTimePublic     bool
+	Modified             time.Time
+	Photo                string
+	PhotoPublic          string
+	Plan                 string
+	Timezone             string
+	Username             string
+	Website              string
+}
+
+type Users struct {
+	Data UserData
+}
+
 // New initializes the library
 func New(rt http.RoundTripper) *WakaTime {
 	return &WakaTime{
@@ -250,7 +276,23 @@ func (wt *WakaTime) Summaries(user string, start, end time.Time, project, branch
 }
 
 // Users fetches the users report
-func (wt *WakaTime) Users() {}
+func (wt *WakaTime) Users(user string) (*Users, error) {
+	var err error
+	var u *url.URL
+	if u, err = url.Parse(APIBase); err != nil {
+		return nil, err
+	}
+	u.Path += "users/" + user
+	var content []byte
+	if content, err = wt.fetchURL(u.String()); err != nil {
+		return nil, err
+	}
+	var us Users
+	if err = json.Unmarshal(content, &us); err != nil {
+		return nil, err
+	}
+	return &us, nil
+}
 
 // UnmarshalJSON unmarshals the Time type
 func (ut *Time) UnmarshalJSON(data []byte) error {
