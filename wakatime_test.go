@@ -20,11 +20,11 @@ const (
     "human_readable_website": "www.avtobiografia.com",
     "id": "e9b45851-991b-4755-ffff-6355d927f472",
     "last_heartbeat": "2015-04-26T04:16:23Z",
-    "last_plugin": "wakatime/4.0.8 (Linux-3.16.0-34-generic-x86_64-with-Ubuntu-14.10-utopic) Python2.7.8.final.0 sublime/3083 sublime-wakatime/4.0.0",
+    "last_plugin": "wakatime/4.0.8",
     "last_plugin_name": "Sublime",
     "last_project": "go-wakatime",
     "location": "Stockholm, Sweden",
-    "logged_time_public": false,
+    "logged_time_public": true,
     "modified": "2015-04-23T05:48:57Z",
     "photo": "https://secure.gravatar.com/avatar/8cf592a20de754300721bf954aa40507?s=150&d=identicon",
     "photo_public": true,
@@ -70,6 +70,19 @@ func TestWakatime(t *testing.T) {
 				So(u.Data.FullName, ShouldEqual, "Full Name")
 				So(u.Data.HumanReadableWebsite, ShouldEqual, "www.avtobiografia.com")
 				So(u.Data.ID, ShouldEqual, "e9b45851-991b-4755-ffff-6355d927f472")
+				So(u.Data.LastHeartbeat.Format(time.RFC3339), ShouldEqual, "2015-04-26T04:16:23Z")
+				So(u.Data.LastPlugin, ShouldEqual, "wakatime/4.0.8")
+				So(u.Data.LastPluginName, ShouldEqual, "Sublime")
+				So(u.Data.LastProject, ShouldEqual, "go-wakatime")
+				So(u.Data.Location, ShouldEqual, "Stockholm, Sweden")
+				So(u.Data.LoggedTimePublic, ShouldBeTrue)
+				So(u.Data.Modified.Format(time.RFC3339), ShouldEqual, "2015-04-23T05:48:57Z")
+				So(u.Data.Photo, ShouldEqual, "https://secure.gravatar.com/avatar/8cf592a20de754300721bf954aa40507?s=150&d=identicon")
+				So(u.Data.PhotoPublic, ShouldBeTrue)
+				So(u.Data.Plan, ShouldEqual, "basic")
+				So(u.Data.Timezone, ShouldEqual, "Europe/Stockholm")
+				So(u.Data.Username, ShouldEqual, "aquilax")
+				So(u.Data.Website, ShouldEqual, "http://www.avtobiografia.com")
 			})
 		})
 	})

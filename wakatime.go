@@ -162,15 +162,15 @@ type UserData struct {
 	FullName             string `json:"full_name"`
 	HumanReadableWebsite string `json:"human_readable_website"`
 	ID                   string
-	LastHeartbeat        time.Time
-	LastPlugin           string
-	LastPluginName       string
-	LastProject          string
+	LastHeartbeat        time.Time `json:"last_heartbeat"`
+	LastPlugin           string    `json:"last_plugin"`
+	LastPluginName       string    `json:"last_plugin_name"`
+	LastProject          string    `json:"last_project"`
 	Location             string
-	LoggedTimePublic     bool
+	LoggedTimePublic     bool `json:"logged_time_public"`
 	Modified             time.Time
 	Photo                string
-	PhotoPublic          string
+	PhotoPublic          bool `json:"photo_public"`
 	Plan                 string
 	Timezone             string
 	Username             string
