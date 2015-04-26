@@ -116,14 +116,14 @@ type SummaryGrandTotal struct {
 	Minutes      int
 	Seconds      int
 	Text         string
-	TotalSeconds int
+	TotalSeconds int `json:"total_seconds"`
 }
 
 // SummaryItem contains the summary item data
 type SummaryItem struct {
-	SummaryGrandTotal
 	Name    string
 	Percent float32
+	SummaryGrandTotal
 }
 
 type SummaryEditor SummaryItem
@@ -142,7 +142,7 @@ type SumaryRange struct {
 
 type SummariesData struct {
 	Editors          []SummaryEditor
-	GrandTotal       SummaryGrandTotal
+	GrandTotal       SummaryGrandTotal `json:"grand_total"`
 	Languages        []SummaryLanguage
 	OperatingSystems []SummaryOperatingSystem
 	Projects         []SummaryProject
@@ -324,4 +324,8 @@ func (wt *WakaTime) fetchURL(url string) ([]byte, error) {
 		return nil, fmt.Errorf("HTTP Error: %d", resp.StatusCode)
 	}
 	return ioutil.ReadAll(resp.Body)
+}
+
+func (t Time) Time() time.Time {
+	return time.Time(t)
 }

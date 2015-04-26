@@ -34,6 +34,76 @@ const (
     "website": "http://www.avtobiografia.com"
   }
 }`
+	summaries = `{
+  "data": [
+    {
+      "editors": [
+        {
+          "digital": "2:1005",
+          "hours": 2,
+          "minutes": 10,
+          "name": "PhpStorm",
+          "percent": 69.91,
+          "seconds": 5,
+          "text": "2 hours 10 minutes 5 seconds",
+          "total_seconds": 7805
+        }
+      ],
+      "grand_total": {
+        "digital": "3:03",
+        "hours": 3,
+        "minutes": 3,
+        "text": "3 hours 3 minutes",
+        "total_seconds": 11165
+      },
+      "languages": [
+        {
+          "digital": "0:22:58",
+          "hours": 0,
+          "minutes": 22,
+          "name": "Go",
+          "percent": 12.34,
+          "seconds": 58,
+          "text": "22 minutes 58 seconds",
+          "total_seconds": 1378
+        }
+      ],
+      "operating_systems": [
+        {
+          "digital": "3:0604",
+          "hours": 3,
+          "minutes": 6,
+          "name": "Linux",
+          "percent": 100,
+          "seconds": 4,
+          "text": "3 hours 6 minutes 4 seconds",
+          "total_seconds": 11164
+        }
+      ],
+      "projects": [
+        {
+          "digital": "0:22",
+          "hours": 0,
+          "minutes": 22,
+          "name": "go-wakatime",
+          "percent": 12.23,
+          "text": "22 minutes",
+          "total_seconds": 1365
+        }
+      ],
+      "range": {
+        "date": "04\/23\/2015",
+        "date_human": "04\/23\/2015",
+        "end": 1429826399,
+        "start": 1429740000,
+        "text": "04\/23\/2015",
+        "timezone": "Europe\/Stockholm"
+      }
+    }
+  ],
+  "end": 1429912799,
+  "start": 1429740000
+}`
 )
 
 type DummyTransport struct {
@@ -51,7 +121,7 @@ func (dt *DummyTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		StatusCode: 200,
 		Body:       ioutil.NopCloser(bufio.NewReader(b)),
 	}
-	return resp, nil //http.ReadResponse(bufio.NewReader(b), nil)
+	return resp, nil
 }
 
 func TestWakatime(t *testing.T) {
@@ -59,7 +129,7 @@ func TestWakatime(t *testing.T) {
 		wt := New(NewDummyTransport(users))
 		Convey("Wakatime must not be nil", func() {
 			So(wt, ShouldNotBeNil)
-			Convey("JSON must be correctly parsed", func() {
+			Convey("Users JSON must be correctly parsed", func() {
 				u, err := wt.Users(CurrentUser)
 				So(err, ShouldBeNil)
 				So(u, ShouldNotBeNil)
@@ -83,6 +153,37 @@ func TestWakatime(t *testing.T) {
 				So(u.Data.Timezone, ShouldEqual, "Europe/Stockholm")
 				So(u.Data.Username, ShouldEqual, "aquilax")
 				So(u.Data.Website, ShouldEqual, "http://www.avtobiografia.com")
+			})
+		})
+	})
+	Convey("Given wakatime", t, func() {
+		wt := New(NewDummyTransport(summaries))
+		Convey("Wakatime must not be nil", func() {
+			So(wt, ShouldNotBeNil)
+			Convey("Summaries JSON must be correctly parsed", func() {
+				s, err := wt.Summaries(CurrentUser, time.Now(), time.Now(), nil, nil)
+				So(err, ShouldBeNil)
+				So(s, ShouldNotBeNil)
+				So(s.End.Time().Unix(), ShouldEqual, 1429912832)
+				So(s.Start.Time().Unix(), ShouldEqual, 1429740032)
+				So(len(s.Data), ShouldEqual, 1)
+				sday := s.Data[0]
+				// Editors
+				So(len(sday.Editors), ShouldEqual, 1)
+				So(sday.Editors[0].Digital, ShouldEqual, "2:1005")
+				So(sday.Editors[0].Hours, ShouldEqual, 2)
+				So(sday.Editors[0].Minutes, ShouldEqual, 10)
+				So(sday.Editors[0].Name, ShouldEqual, "PhpStorm")
+				So(sday.Editors[0].Percent, ShouldEqual, 69.91)
+				So(sday.Editors[0].Seconds, ShouldEqual, 5)
+				So(sday.Editors[0].Text, ShouldEqual, "2 hours 10 minutes 5 seconds")
+				So(sday.Editors[0].TotalSeconds, ShouldEqual, 7805)
+				// Grand Total
+				So(sday.GrandTotal.Digital, ShouldEqual, "3:03")
+				So(sday.GrandTotal.Hours, ShouldEqual, 3)
+				So(sday.GrandTotal.Minutes, ShouldEqual, 3)
+				So(sday.GrandTotal.Text, ShouldEqual, "3 hours 3 minutes")
+				So(sday.GrandTotal.TotalSeconds, ShouldEqual, 11165)
 			})
 		})
 	})
