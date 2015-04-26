@@ -109,6 +109,7 @@ type Stats struct {
 	Data StatsData
 }
 
+// SummaryGrandTotal contains the grand total summary
 type SummaryGrandTotal struct {
 	Digital      string
 	Hours        int
@@ -118,6 +119,7 @@ type SummaryGrandTotal struct {
 	TotalSeconds int
 }
 
+// SummaryItem contains the summary item data
 type SummaryItem struct {
 	SummaryGrandTotal
 	Name    string
@@ -156,9 +158,9 @@ type Summaries struct {
 type UserData struct {
 	Created              time.Time
 	Email                string
-	EmailPublic          bool
-	FullName             string
-	HumanReadableWebsite string
+	EmailPublic          bool   `json:"email_public"`
+	FullName             string `json:"full_name"`
+	HumanReadableWebsite string `json:"human_readable_website"`
 	ID                   string
 	LastHeartbeat        time.Time
 	LastPlugin           string
