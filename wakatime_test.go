@@ -168,6 +168,7 @@ func TestWakatime(t *testing.T) {
 				So(s.Start.Time().Unix(), ShouldEqual, 1429740032)
 				So(len(s.Data), ShouldEqual, 1)
 				sday := s.Data[0]
+
 				// Editors
 				So(len(sday.Editors), ShouldEqual, 1)
 				So(sday.Editors[0].Digital, ShouldEqual, "2:1005")
@@ -178,12 +179,53 @@ func TestWakatime(t *testing.T) {
 				So(sday.Editors[0].Seconds, ShouldEqual, 5)
 				So(sday.Editors[0].Text, ShouldEqual, "2 hours 10 minutes 5 seconds")
 				So(sday.Editors[0].TotalSeconds, ShouldEqual, 7805)
+
 				// Grand Total
 				So(sday.GrandTotal.Digital, ShouldEqual, "3:03")
 				So(sday.GrandTotal.Hours, ShouldEqual, 3)
 				So(sday.GrandTotal.Minutes, ShouldEqual, 3)
 				So(sday.GrandTotal.Text, ShouldEqual, "3 hours 3 minutes")
 				So(sday.GrandTotal.TotalSeconds, ShouldEqual, 11165)
+
+				// Languages
+				So(len(sday.Languages), ShouldEqual, 1)
+				So(sday.Languages[0].Digital, ShouldEqual, "0:22:58")
+				So(sday.Languages[0].Hours, ShouldEqual, 0)
+				So(sday.Languages[0].Minutes, ShouldEqual, 22)
+				So(sday.Languages[0].Name, ShouldEqual, "Go")
+				So(sday.Languages[0].Percent, ShouldEqual, 12.34)
+				So(sday.Languages[0].Seconds, ShouldEqual, 58)
+				So(sday.Languages[0].Text, ShouldEqual, "22 minutes 58 seconds")
+				So(sday.Languages[0].TotalSeconds, ShouldEqual, 1378)
+
+				// Operating systems
+				So(len(sday.OperatingSystems), ShouldEqual, 1)
+				So(sday.OperatingSystems[0].Digital, ShouldEqual, "3:0604")
+				So(sday.OperatingSystems[0].Hours, ShouldEqual, 3)
+				So(sday.OperatingSystems[0].Minutes, ShouldEqual, 6)
+				So(sday.OperatingSystems[0].Name, ShouldEqual, "Linux")
+				So(sday.OperatingSystems[0].Percent, ShouldEqual, 100)
+				So(sday.OperatingSystems[0].Seconds, ShouldEqual, 4)
+				So(sday.OperatingSystems[0].Text, ShouldEqual, "3 hours 6 minutes 4 seconds")
+				So(sday.OperatingSystems[0].TotalSeconds, ShouldEqual, 11164)
+
+				// Projects
+				So(len(sday.Projects), ShouldEqual, 1)
+				So(sday.Projects[0].Digital, ShouldEqual, "0:22")
+				So(sday.Projects[0].Hours, ShouldEqual, 0)
+				So(sday.Projects[0].Minutes, ShouldEqual, 22)
+				So(sday.Projects[0].Name, ShouldEqual, "go-wakatime")
+				So(sday.Projects[0].Percent, ShouldEqual, 12.23)
+				So(sday.Projects[0].Text, ShouldEqual, "22 minutes")
+				So(sday.Projects[0].TotalSeconds, ShouldEqual, 1365)
+
+				// Range
+				So(sday.Range.Date, ShouldEqual, "04/23/2015")
+				So(sday.Range.DateHuman, ShouldEqual, "04/23/2015")
+				So(sday.Range.End.Time().Unix(), ShouldEqual, 1429826432)
+				So(sday.Range.Start.Time().Unix(), ShouldEqual, 1429740032)
+				So(sday.Range.Text, ShouldEqual, "04/23/2015")
+				So(sday.Range.Timezone, ShouldEqual, "Europe/Stockholm")
 			})
 		})
 	})

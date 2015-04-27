@@ -133,7 +133,7 @@ type SummaryProject SummaryItem
 
 type SumaryRange struct {
 	Date      string
-	DateHuman string
+	DateHuman string `json:"date_human"`
 	End       Time
 	Start     Time
 	Text      string
@@ -144,7 +144,7 @@ type SummariesData struct {
 	Editors          []SummaryEditor
 	GrandTotal       SummaryGrandTotal `json:"grand_total"`
 	Languages        []SummaryLanguage
-	OperatingSystems []SummaryOperatingSystem
+	OperatingSystems []SummaryOperatingSystem `json:"operating_systems"`
 	Projects         []SummaryProject
 	Range            SumaryRange
 }
