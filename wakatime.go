@@ -43,12 +43,12 @@ type WakaTime struct {
 
 // DurationsData is single duration segment
 type DurationsData struct {
-	Duration Time
+	Duration float32
 	Project  string
 	Time     Time
 }
 
-// Durations is the structure rerurned by the durations request
+// Durations is the structure returned by the durations request
 type Durations struct {
 	Branches []string
 	Data     []DurationsData

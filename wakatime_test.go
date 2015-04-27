@@ -104,6 +104,21 @@ const (
   "end": 1429912799,
   "start": 1429740000
 }`
+	durations = `{
+  "branches": [
+    "master"
+  ],
+  "data": [
+    {
+      "duration": 2240.0,
+      "project": "go-wakatime",
+      "time": 1430021746.422815
+    }
+  ],
+  "end": 1430085599,
+  "start": 1429999200,
+  "timezone": "Europe/Stockholm"
+}`
 )
 
 type DummyTransport struct {
@@ -226,6 +241,26 @@ func TestWakatime(t *testing.T) {
 				So(sday.Range.Start.Time().Unix(), ShouldEqual, 1429740032)
 				So(sday.Range.Text, ShouldEqual, "04/23/2015")
 				So(sday.Range.Timezone, ShouldEqual, "Europe/Stockholm")
+			})
+		})
+	})
+
+	Convey("Given wakatime", t, func() {
+		wt := New(NewDummyTransport(durations))
+		Convey("Wakatime must not be nil", func() {
+			So(wt, ShouldNotBeNil)
+			Convey("Durations JSON must be correctly parsed", func() {
+				d, err := wt.Durations(CurrentUser, time.Now(), nil, nil)
+				So(err, ShouldBeNil)
+				So(d, ShouldNotBeNil)
+				So(len(d.Branches), ShouldEqual, 1)
+				So(d.Branches[0], ShouldEqual, "master")
+				So(len(d.Data), ShouldEqual, 1)
+				So(d.Data[0].Duration, ShouldEqual, 2240.0)
+				So(d.Data[0].Project, ShouldEqual, "go-wakatime")
+				So(d.Data[0].Time.Time().UnixNano(), ShouldEqual, 1430021760000000000)
+				So(d.End.Time().Unix(), ShouldEqual, 1430085632)
+				So(d.Start.Time().Unix(), ShouldEqual, 1429999232)
 			})
 		})
 	})
