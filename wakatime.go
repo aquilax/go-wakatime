@@ -59,12 +59,12 @@ type Durations struct {
 
 // StatsItem is single item in the stats report
 type StatsItem struct {
-	CreatedAt    time.Time
+	CreatedAt    time.Time `json:"created_at"`
 	ID           string
-	ModifiedAt   time.Time
+	ModifiedAt   time.Time `json:"modified_at"`
 	Name         string
 	Percent      float32
-	TotalSeconds int
+	TotalSeconds int `json:"total_seconds"`
 }
 
 // StatsEditor represents editor data in the stats report
@@ -81,16 +81,16 @@ type StatsProject StatsItem
 
 // StatsData is the main data body in the stats report
 type StatsData struct {
-	CreatedAt                 time.Time
+	CreatedAt                 time.Time `json:"created_at"`
 	Editors                   []StatsEditor
 	End                       Time
-	HumanReadableDailyAverage string
-	HumanReadableTotal        string
+	HumanReadableDailyAverage string `json:"human_readable_daily_average"`
+	HumanReadableTotal        string `json:"human_readable_total"`
 	ID                        string
-	IsUpToDate                bool
+	IsUpToDate                bool `json:"is_up_to_date"`
 	Languages                 []StatsLanguage
-	ModifiedAt                time.Time
-	OperatingSystems          []StatsOperatingSystem
+	ModifiedAt                time.Time              `json:"modified_at"`
+	OperatingSystems          []StatsOperatingSystem `json:"operating_systems"`
 	Project                   *string
 	Projects                  []StatsProject
 	Range                     Range
@@ -98,10 +98,10 @@ type StatsData struct {
 	Status                    string
 	Timeout                   int
 	Timezone                  string
-	TotalSeconds              int
-	UserID                    string
+	TotalSeconds              int    `json:"total_seconds"`
+	UserID                    string `json:"user_id"`
 	Username                  string
-	WritesOnly                bool
+	WritesOnly                bool `json:"writes_only"`
 }
 
 // Stats is the data returned by the stats report
@@ -126,12 +126,20 @@ type SummaryItem struct {
 	SummaryGrandTotal
 }
 
+// SummaryEditor contains the summary information about editor
 type SummaryEditor SummaryItem
+
+// SummaryLanguage contains the summary information about language
 type SummaryLanguage SummaryItem
+
+// SummaryOperatingSystem contains the summary information about operating system
 type SummaryOperatingSystem SummaryItem
+
+// SummaryProject contains the summary information about project
 type SummaryProject SummaryItem
 
-type SumaryRange struct {
+// SummaryRange contains information about the requested range
+type SummaryRange struct {
 	Date      string
 	DateHuman string `json:"date_human"`
 	End       Time
@@ -140,21 +148,24 @@ type SumaryRange struct {
 	Timezone  string
 }
 
+// SummariesData contains summary data for single day
 type SummariesData struct {
 	Editors          []SummaryEditor
 	GrandTotal       SummaryGrandTotal `json:"grand_total"`
 	Languages        []SummaryLanguage
 	OperatingSystems []SummaryOperatingSystem `json:"operating_systems"`
 	Projects         []SummaryProject
-	Range            SumaryRange
+	Range            SummaryRange
 }
 
+// Summaries contains the whole summaries report
 type Summaries struct {
 	Data  []SummariesData
 	End   Time
 	Start Time
 }
 
+// UserData contains the data for the user report
 type UserData struct {
 	Created              time.Time
 	Email                string
@@ -177,6 +188,7 @@ type UserData struct {
 	Website              string
 }
 
+// Users contains the user report
 type Users struct {
 	Data UserData
 }
@@ -297,14 +309,14 @@ func (wt *WakaTime) Users(user string) (*Users, error) {
 }
 
 // UnmarshalJSON unmarshals the Time type
-func (ut *Time) UnmarshalJSON(data []byte) error {
+func (t *Time) UnmarshalJSON(data []byte) error {
 	ts, err := strconv.ParseFloat(string(data), 32)
 	if err != nil {
 		return err
 	}
 	sec := int64(ts)
 	ns := int64((ts - float64(sec)) * float64(time.Second))
-	*ut = Time(time.Unix(int64(sec), ns))
+	*t = Time(time.Unix(int64(sec), ns))
 	return nil
 }
 
@@ -326,6 +338,7 @@ func (wt *WakaTime) fetchURL(url string) ([]byte, error) {
 	return ioutil.ReadAll(resp.Body)
 }
 
+// Time converts Time to time.Time
 func (t Time) Time() time.Time {
 	return time.Time(t)
 }

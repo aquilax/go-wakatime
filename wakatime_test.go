@@ -119,6 +119,67 @@ const (
   "start": 1429999200,
   "timezone": "Europe/Stockholm"
 }`
+	stats = `{
+  "data": {
+    "created_at": "2015-04-23T04:38:05Z",
+    "editors": [
+      {
+        "created_at": "2015-04-24T07:12:29Z",
+        "id": "a5979e20-aa2a-403d-9214-b49e85f00fbc",
+        "modified_at": "2015-04-28T07:08:06Z",
+        "name": "Vim",
+        "percent": 22.64,
+        "total_seconds": 11803
+      }
+    ],
+    "end": 1430171999.000000,
+    "human_readable_daily_average": "2 hours 3 minutes",
+    "human_readable_total": "14 hours 24 minutes",
+    "id": "3e570b91-2540-4c9e-a71a-75b1909188ea",
+    "is_up_to_date": true,
+    "languages": [
+      {
+        "created_at": "2015-04-24T07:12:29Z",
+        "id": "23c0dd3f-d09a-4c01-a813-37aa257a114c",
+        "modified_at": "2015-04-28T07:08:06Z",
+        "name": "Go",
+        "percent": 41.37,
+        "total_seconds": 21569
+      }
+    ],
+    "modified_at": "2015-04-28T07:08:06Z",
+    "operating_systems": [
+      {
+        "created_at": "2015-04-24T07:12:29Z",
+        "id": "36685edf-5a5e-4d53-8d77-61c1dd6e9c46",
+        "modified_at": "2015-04-28T07:08:06Z",
+        "name": "Linux",
+        "percent": 100.00,
+        "total_seconds": 52137
+      }
+    ],
+    "project": null,
+    "projects": [
+      {
+        "created_at": "2015-04-24T07:12:29Z",
+        "id": "198e4ed6-a208-41b7-b698-1826a003411a",
+        "modified_at": "2015-04-28T07:08:06Z",
+        "name": "go-wakatime",
+        "percent": 45.77,
+        "total_seconds": 23865
+      }
+    ],
+    "range": "last_7_days",
+    "start": 1429567200.000000,
+    "status": "ok",
+    "timeout": 15,
+    "timezone": "Europe/Stockholm",
+    "total_seconds": 51840,
+    "user_id": "e9b45851-991b-4755-9ccd-6355d927f472",
+    "username": "aquilax",
+    "writes_only": true
+  }
+}`
 )
 
 type DummyTransport struct {
@@ -261,6 +322,74 @@ func TestWakatime(t *testing.T) {
 				So(d.Data[0].Time.Time().UnixNano(), ShouldEqual, 1430021760000000000)
 				So(d.End.Time().Unix(), ShouldEqual, 1430085632)
 				So(d.Start.Time().Unix(), ShouldEqual, 1429999232)
+			})
+		})
+	})
+
+	Convey("Given wakatime", t, func() {
+		wt := New(NewDummyTransport(stats))
+		Convey("Wakatime must not be nil", func() {
+			So(wt, ShouldNotBeNil)
+			Convey("Stats JSON must be correctly parsed", func() {
+				s, err := wt.Stats(CurrentUser, Last30Days, nil, nil, nil)
+				So(err, ShouldBeNil)
+				So(s, ShouldNotBeNil)
+				So(s.Data.CreatedAt.Format(time.RFC3339), ShouldEqual, "2015-04-23T04:38:05Z")
+				// Editors
+				So(len(s.Data.Editors), ShouldEqual, 1)
+				So(s.Data.Editors[0].CreatedAt.Format(time.RFC3339), ShouldEqual, "2015-04-24T07:12:29Z")
+				So(s.Data.Editors[0].ID, ShouldEqual, "a5979e20-aa2a-403d-9214-b49e85f00fbc")
+				So(s.Data.Editors[0].ModifiedAt.Format(time.RFC3339), ShouldEqual, "2015-04-28T07:08:06Z")
+				So(s.Data.Editors[0].Name, ShouldEqual, "Vim")
+				So(s.Data.Editors[0].Percent, ShouldEqual, 22.64)
+				So(s.Data.Editors[0].TotalSeconds, ShouldEqual, 11803)
+
+				So(s.Data.End.Time().UnixNano(), ShouldEqual, 1430172032000000000)
+				So(s.Data.HumanReadableDailyAverage, ShouldEqual, "2 hours 3 minutes")
+				So(s.Data.HumanReadableTotal, ShouldEqual, "14 hours 24 minutes")
+				So(s.Data.ID, ShouldEqual, "3e570b91-2540-4c9e-a71a-75b1909188ea")
+				So(s.Data.IsUpToDate, ShouldBeTrue)
+
+				// Languages
+				So(len(s.Data.Languages), ShouldEqual, 1)
+				So(s.Data.Languages[0].CreatedAt.Format(time.RFC3339), ShouldEqual, "2015-04-24T07:12:29Z")
+				So(s.Data.Languages[0].ID, ShouldEqual, "23c0dd3f-d09a-4c01-a813-37aa257a114c")
+				So(s.Data.Languages[0].ModifiedAt.Format(time.RFC3339), ShouldEqual, "2015-04-28T07:08:06Z")
+				So(s.Data.Languages[0].Name, ShouldEqual, "Go")
+				So(s.Data.Languages[0].Percent, ShouldEqual, 41.37)
+				So(s.Data.Languages[0].TotalSeconds, ShouldEqual, 21569)
+
+				So(s.Data.ModifiedAt.Format(time.RFC3339), ShouldEqual, "2015-04-28T07:08:06Z")
+
+				// Operating Systems
+				So(len(s.Data.OperatingSystems), ShouldEqual, 1)
+				So(s.Data.OperatingSystems[0].CreatedAt.Format(time.RFC3339), ShouldEqual, "2015-04-24T07:12:29Z")
+				So(s.Data.OperatingSystems[0].ID, ShouldEqual, "36685edf-5a5e-4d53-8d77-61c1dd6e9c46")
+				So(s.Data.OperatingSystems[0].ModifiedAt.Format(time.RFC3339), ShouldEqual, "2015-04-28T07:08:06Z")
+				So(s.Data.OperatingSystems[0].Name, ShouldEqual, "Linux")
+				So(s.Data.OperatingSystems[0].Percent, ShouldEqual, 100.00)
+				So(s.Data.OperatingSystems[0].TotalSeconds, ShouldEqual, 52137)
+
+				So(s.Data.Project, ShouldBeNil)
+
+				// Projects
+				So(len(s.Data.Projects), ShouldEqual, 1)
+				So(s.Data.Projects[0].CreatedAt.Format(time.RFC3339), ShouldEqual, "2015-04-24T07:12:29Z")
+				So(s.Data.Projects[0].ID, ShouldEqual, "198e4ed6-a208-41b7-b698-1826a003411a")
+				So(s.Data.Projects[0].ModifiedAt.Format(time.RFC3339), ShouldEqual, "2015-04-28T07:08:06Z")
+				So(s.Data.Projects[0].Name, ShouldEqual, "go-wakatime")
+				So(s.Data.Projects[0].Percent, ShouldEqual, 45.77)
+				So(s.Data.Projects[0].TotalSeconds, ShouldEqual, 23865)
+
+				So(s.Data.Range, ShouldEqual, Last7Days)
+				So(s.Data.Start.Time().UnixNano(), ShouldEqual, 1429567232000000000)
+				So(s.Data.Status, ShouldEqual, "ok")
+				So(s.Data.Timeout, ShouldEqual, 15)
+				So(s.Data.Timezone, ShouldEqual, "Europe/Stockholm")
+				So(s.Data.TotalSeconds, ShouldEqual, 51840)
+				So(s.Data.UserID, ShouldEqual, "e9b45851-991b-4755-9ccd-6355d927f472")
+				So(s.Data.Username, ShouldEqual, "aquilax")
+				So(s.Data.WritesOnly, ShouldBeTrue)
 			})
 		})
 	})
