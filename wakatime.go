@@ -67,6 +67,30 @@ type StatsItem struct {
 	TotalSeconds int `json:"total_seconds"`
 }
 
+// HeartbeatItem contains single hartbeat item
+type HeartbeatItem struct {
+	Entity       string
+	Type         string
+	Time         float32
+	Project      string
+	Branch       string
+	Language     string
+	Dependencies string
+	Lines        int
+	Lineno       int
+	Cursorpos    int
+	IsWrite      bool `json:"is_write"`
+	IsDebugging  bool `json:"is_debugging"`
+}
+
+// Heartbeats contains the Heartbeats report
+type Heartbeats struct {
+	Data     []HeartbeatItem
+	Start    Time
+	End      Time
+	Timezone string
+}
+
 // StatsEditor represents editor data in the stats report
 type StatsEditor StatsItem
 
@@ -261,7 +285,7 @@ func (wt *WakaTime) Stats(user string, rng Range, timeout *int, writesOnly *bool
 }
 
 // Summaries fetches the summaries report
-func (wt *WakaTime) Summaries(user string, start, end time.Time, project, branches *string) (*Summaries, error) {
+func (wt *WakaTime) Summaries(user string, start, date time.Time, project, branches *string) (*Summaries, error) {
 	var err error
 	var u *url.URL
 	if u, err = url.Parse(APIBase); err != nil {
@@ -306,6 +330,28 @@ func (wt *WakaTime) Users(user string) (*Users, error) {
 		return nil, err
 	}
 	return &us, nil
+}
+
+// GetHartbeats fetches user's heartbeats sent from plugins for the given day
+func (wt *WakaTime) GetHartbeats(user string, date time.Time) (*Heartbeats, error) {
+	var err error
+	var u *url.URL
+	if u, err = url.Parse(APIBase); err != nil {
+		return nil, err
+	}
+	u.Path += "users/" + user
+	q := u.Query()
+	q.Set("date", date.Format(dateFormat))
+	u.RawQuery = q.Encode()
+	var content []byte
+	if content, err = wt.fetchURL(u.String()); err != nil {
+		return nil, err
+	}
+	var h Heartbeats
+	if err = json.Unmarshal(content, &h); err != nil {
+		return nil, err
+	}
+	return &h, nil
 }
 
 // UnmarshalJSON unmarshals the Time type

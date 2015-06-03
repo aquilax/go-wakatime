@@ -180,6 +180,35 @@ const (
     "writes_only": true
   }
 }`
+	hartbeat = `{
+  "data": [
+    {
+      "branch": "master",
+      "entity": "/home/aquilax/projects/frondate_project/frondate/settings/production.py",
+      "id": "2727163e-e614-47cd-8ffc-f3dc3f18bcdc",
+      "is_debugging": null,
+      "is_write": false,
+      "language": "Python",
+      "project": "frondate_project",
+      "time": 1433217822.482732,
+      "type": "file"
+    },
+    {
+      "branch": "master",
+      "entity": "/home/aquilax/projects/frondate_project/vagrant/debian-jessie/provision.sh",
+      "id": "690c5596-33f1-458a-9a8f-8d4062daa5bb",
+      "is_debugging": null,
+      "is_write": false,
+      "language": "Bash",
+      "project": "frondate_project",
+      "time": 1433217827.417102,
+      "type": "file"
+    }
+  ],
+  "end": 1433282399,
+  "start": 1433196000,
+  "timezone": "Europe/Stockholm"
+}`
 )
 
 type DummyTransport struct {
@@ -390,6 +419,20 @@ func TestWakatime(t *testing.T) {
 				So(s.Data.UserID, ShouldEqual, "e9b45851-991b-4755-9ccd-6355d927f472")
 				So(s.Data.Username, ShouldEqual, "aquilax")
 				So(s.Data.WritesOnly, ShouldBeTrue)
+			})
+		})
+	})
+	Convey("Given wakatime", t, func() {
+		wt := New(NewDummyTransport(hartbeat))
+		Convey("Wakatime must not be nil", func() {
+			So(wt, ShouldNotBeNil)
+			Convey("Durations JSON must be correctly parsed", func() {
+				h, err := wt.GetHartbeats(CurrentUser, time.Now())
+				So(err, ShouldBeNil)
+				So(h, ShouldNotBeNil)
+				So(len(h.Data), ShouldEqual, 2)
+				So(h.End.Time().Format(time.RFC3339), ShouldEqual, "2015-06-03T00:00:32+02:00")
+				So(h.Start.Time().Format(time.RFC3339), ShouldEqual, "2015-06-02T00:00:32+02:00")
 			})
 		})
 	})
