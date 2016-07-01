@@ -3,11 +3,12 @@ package wakatime
 import (
 	"bufio"
 	"bytes"
-	. "github.com/smartystreets/goconvey/convey"
 	"io/ioutil"
 	"net/http"
 	"testing"
 	"time"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 const (
@@ -431,8 +432,8 @@ func TestWakatime(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(h, ShouldNotBeNil)
 				So(len(h.Data), ShouldEqual, 2)
-				So(h.End.Time().Format(time.RFC3339), ShouldEqual, "2015-06-03T00:00:32+02:00")
-				So(h.Start.Time().Format(time.RFC3339), ShouldEqual, "2015-06-02T00:00:32+02:00")
+				So(h.End.Time().UTC().Format(time.RFC3339), ShouldEqual, "2015-06-02T22:00:32Z")
+				So(h.Start.Time().UTC().Format(time.RFC3339), ShouldEqual, "2015-06-01T22:00:32Z")
 			})
 		})
 	})
