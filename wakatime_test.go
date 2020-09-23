@@ -95,15 +95,15 @@ const (
       "range": {
         "date": "04\/23\/2015",
         "date_human": "04\/23\/2015",
-        "end": 1429826399,
-        "start": 1429740000,
+        "end": "2020-09-21T15:59:59Z",
+        "start": "2020-09-20T16:00:00Z",
         "text": "04\/23\/2015",
         "timezone": "Europe\/Stockholm"
       }
     }
   ],
-  "end": 1429912799,
-  "start": 1429740000
+  "end": "2020-09-21T15:59:59Z",
+  "start": "2020-09-20T16:00:00Z"
 }`
 	durations = `{
   "branches": [
@@ -116,8 +116,8 @@ const (
       "time": 1430021746.422815
     }
   ],
-  "end": 1430085599,
-  "start": 1429999200,
+  "end": "2015-04-26T21:59:59Z",
+  "start": "2015-04-25T22:00:00Z",
   "timezone": "Europe/Stockholm"
 }`
 	stats = `{
@@ -130,10 +130,10 @@ const (
         "modified_at": "2015-04-28T07:08:06Z",
         "name": "Vim",
         "percent": 22.64,
-        "total_seconds": 11803
+        "total_seconds": 11803.418853
       }
     ],
-    "end": 1430171999.000000,
+    "end": "2015-04-27T21:59:59Z",
     "human_readable_daily_average": "2 hours 3 minutes",
     "human_readable_total": "14 hours 24 minutes",
     "id": "3e570b91-2540-4c9e-a71a-75b1909188ea",
@@ -145,7 +145,7 @@ const (
         "modified_at": "2015-04-28T07:08:06Z",
         "name": "Go",
         "percent": 41.37,
-        "total_seconds": 21569
+        "total_seconds": 21569.418853
       }
     ],
     "modified_at": "2015-04-28T07:08:06Z",
@@ -156,7 +156,7 @@ const (
         "modified_at": "2015-04-28T07:08:06Z",
         "name": "Linux",
         "percent": 100.00,
-        "total_seconds": 52137
+        "total_seconds": 52137.418853
       }
     ],
     "project": null,
@@ -167,11 +167,11 @@ const (
         "modified_at": "2015-04-28T07:08:06Z",
         "name": "go-wakatime",
         "percent": 45.77,
-        "total_seconds": 23865
+        "total_seconds": 23865.418853
       }
     ],
     "range": "last_7_days",
-    "start": 1429567200.000000,
+    "start": "2015-04-20T22:00:00Z",
     "status": "ok",
     "timeout": 15,
     "timezone": "Europe/Stockholm",
@@ -206,8 +206,8 @@ const (
       "type": "file"
     }
   ],
-  "end": 1433282399,
-  "start": 1433196000,
+  "end": "2015-06-02T21:59:59Z",
+  "start": "2015-06-01T22:00:00Z",
   "timezone": "Europe/Stockholm"
 }`
 )
@@ -270,8 +270,8 @@ func TestWakatime(t *testing.T) {
 				s, err := wt.Summaries(CurrentUser, time.Now(), time.Now(), nil, nil)
 				So(err, ShouldBeNil)
 				So(s, ShouldNotBeNil)
-				So(s.End.Time().Unix(), ShouldEqual, 1429912832)
-				So(s.Start.Time().Unix(), ShouldEqual, 1429740032)
+				So(s.End.Unix(), ShouldEqual, 1600703999)
+				So(s.Start.Unix(), ShouldEqual, 1600617600)
 				So(len(s.Data), ShouldEqual, 1)
 				sday := s.Data[0]
 
@@ -328,8 +328,8 @@ func TestWakatime(t *testing.T) {
 				// Range
 				So(sday.Range.Date, ShouldEqual, "04/23/2015")
 				So(sday.Range.DateHuman, ShouldEqual, "04/23/2015")
-				So(sday.Range.End.Time().Unix(), ShouldEqual, 1429826432)
-				So(sday.Range.Start.Time().Unix(), ShouldEqual, 1429740032)
+				So(sday.Range.End.Unix(), ShouldEqual, 1600703999)
+				So(sday.Range.Start.Unix(), ShouldEqual, 1600617600)
 				So(sday.Range.Text, ShouldEqual, "04/23/2015")
 				So(sday.Range.Timezone, ShouldEqual, "Europe/Stockholm")
 			})
@@ -350,8 +350,8 @@ func TestWakatime(t *testing.T) {
 				So(d.Data[0].Duration, ShouldEqual, 2240.0)
 				So(d.Data[0].Project, ShouldEqual, "go-wakatime")
 				So(d.Data[0].Time.Time().UnixNano(), ShouldEqual, 1430021760000000000)
-				So(d.End.Time().Unix(), ShouldEqual, 1430085632)
-				So(d.Start.Time().Unix(), ShouldEqual, 1429999232)
+				So(d.End.Unix(), ShouldEqual, 1430085599)
+				So(d.Start.Unix(), ShouldEqual, 1429999200)
 			})
 		})
 	})
@@ -372,9 +372,9 @@ func TestWakatime(t *testing.T) {
 				So(s.Data.Editors[0].ModifiedAt.Format(time.RFC3339), ShouldEqual, "2015-04-28T07:08:06Z")
 				So(s.Data.Editors[0].Name, ShouldEqual, "Vim")
 				So(s.Data.Editors[0].Percent, ShouldEqual, 22.64)
-				So(s.Data.Editors[0].TotalSeconds, ShouldEqual, 11803)
+				So(s.Data.Editors[0].TotalSeconds, ShouldEqual, 11803.418853)
 
-				So(s.Data.End.Time().UnixNano(), ShouldEqual, 1430172032000000000)
+				So(s.Data.End.UnixNano(), ShouldEqual, 1430171999000000000)
 				So(s.Data.HumanReadableDailyAverage, ShouldEqual, "2 hours 3 minutes")
 				So(s.Data.HumanReadableTotal, ShouldEqual, "14 hours 24 minutes")
 				So(s.Data.ID, ShouldEqual, "3e570b91-2540-4c9e-a71a-75b1909188ea")
@@ -387,7 +387,7 @@ func TestWakatime(t *testing.T) {
 				So(s.Data.Languages[0].ModifiedAt.Format(time.RFC3339), ShouldEqual, "2015-04-28T07:08:06Z")
 				So(s.Data.Languages[0].Name, ShouldEqual, "Go")
 				So(s.Data.Languages[0].Percent, ShouldEqual, 41.37)
-				So(s.Data.Languages[0].TotalSeconds, ShouldEqual, 21569)
+				So(s.Data.Languages[0].TotalSeconds, ShouldEqual, 21569.418853)
 
 				So(s.Data.ModifiedAt.Format(time.RFC3339), ShouldEqual, "2015-04-28T07:08:06Z")
 
@@ -398,7 +398,7 @@ func TestWakatime(t *testing.T) {
 				So(s.Data.OperatingSystems[0].ModifiedAt.Format(time.RFC3339), ShouldEqual, "2015-04-28T07:08:06Z")
 				So(s.Data.OperatingSystems[0].Name, ShouldEqual, "Linux")
 				So(s.Data.OperatingSystems[0].Percent, ShouldEqual, 100.00)
-				So(s.Data.OperatingSystems[0].TotalSeconds, ShouldEqual, 52137)
+				So(s.Data.OperatingSystems[0].TotalSeconds, ShouldEqual, 52137.418853)
 
 				So(s.Data.Project, ShouldBeNil)
 
@@ -409,10 +409,10 @@ func TestWakatime(t *testing.T) {
 				So(s.Data.Projects[0].ModifiedAt.Format(time.RFC3339), ShouldEqual, "2015-04-28T07:08:06Z")
 				So(s.Data.Projects[0].Name, ShouldEqual, "go-wakatime")
 				So(s.Data.Projects[0].Percent, ShouldEqual, 45.77)
-				So(s.Data.Projects[0].TotalSeconds, ShouldEqual, 23865)
+				So(s.Data.Projects[0].TotalSeconds, ShouldEqual, 23865.418853)
 
 				So(s.Data.Range, ShouldEqual, Last7Days)
-				So(s.Data.Start.Time().UnixNano(), ShouldEqual, 1429567232000000000)
+				So(s.Data.Start.UnixNano(), ShouldEqual, 1429567200000000000)
 				So(s.Data.Status, ShouldEqual, "ok")
 				So(s.Data.Timeout, ShouldEqual, 15)
 				So(s.Data.Timezone, ShouldEqual, "Europe/Stockholm")
@@ -432,8 +432,8 @@ func TestWakatime(t *testing.T) {
 				So(err, ShouldBeNil)
 				So(h, ShouldNotBeNil)
 				So(len(h.Data), ShouldEqual, 2)
-				So(h.End.Time().UTC().Format(time.RFC3339), ShouldEqual, "2015-06-02T22:00:32Z")
-				So(h.Start.Time().UTC().Format(time.RFC3339), ShouldEqual, "2015-06-01T22:00:32Z")
+				So(h.End.UTC().Format(time.RFC3339), ShouldEqual, "2015-06-02T21:59:59Z")
+				So(h.Start.UTC().Format(time.RFC3339), ShouldEqual, "2015-06-01T22:00:00Z")
 			})
 		})
 	})
