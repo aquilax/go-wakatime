@@ -52,8 +52,8 @@ type DurationsData struct {
 type Durations struct {
 	Branches []string
 	Data     []DurationsData
-	End      Time
-	Start    Time
+	End      time.Time
+	Start    time.Time
 	TimeZone string
 }
 
@@ -64,7 +64,7 @@ type StatsItem struct {
 	ModifiedAt   time.Time `json:"modified_at"`
 	Name         string
 	Percent      float32
-	TotalSeconds int `json:"total_seconds"`
+	TotalSeconds float64 `json:"total_seconds"`
 }
 
 // HeartbeatItem contains single hartbeat item
@@ -75,7 +75,7 @@ type HeartbeatItem struct {
 	Project      string
 	Branch       string
 	Language     string
-	Dependencies string
+	Dependencies []string
 	Lines        int
 	Lineno       int
 	Cursorpos    int
@@ -86,8 +86,8 @@ type HeartbeatItem struct {
 // Heartbeats contains the Heartbeats report
 type Heartbeats struct {
 	Data     []HeartbeatItem
-	Start    Time
-	End      Time
+	Start    time.Time
+	End      time.Time
 	Timezone string
 }
 
@@ -107,7 +107,7 @@ type StatsProject StatsItem
 type StatsData struct {
 	CreatedAt                 time.Time `json:"created_at"`
 	Editors                   []StatsEditor
-	End                       Time
+	End                       time.Time
 	HumanReadableDailyAverage string `json:"human_readable_daily_average"`
 	HumanReadableTotal        string `json:"human_readable_total"`
 	ID                        string
@@ -118,11 +118,11 @@ type StatsData struct {
 	Project                   *string
 	Projects                  []StatsProject
 	Range                     Range
-	Start                     Time
+	Start                     time.Time
 	Status                    string
 	Timeout                   int
 	Timezone                  string
-	TotalSeconds              int    `json:"total_seconds"`
+	TotalSeconds              float64 `json:"total_seconds"`
 	UserID                    string `json:"user_id"`
 	Username                  string
 	WritesOnly                bool `json:"writes_only"`
@@ -140,7 +140,7 @@ type SummaryGrandTotal struct {
 	Minutes      int
 	Seconds      int
 	Text         string
-	TotalSeconds int `json:"total_seconds"`
+	TotalSeconds float64 `json:"total_seconds"`
 }
 
 // SummaryItem contains the summary item data
@@ -166,8 +166,8 @@ type SummaryProject SummaryItem
 type SummaryRange struct {
 	Date      string
 	DateHuman string `json:"date_human"`
-	End       Time
-	Start     Time
+	End       time.Time
+	Start     time.Time
 	Text      string
 	Timezone  string
 }
@@ -185,8 +185,8 @@ type SummariesData struct {
 // Summaries contains the whole summaries report
 type Summaries struct {
 	Data  []SummariesData
-	End   Time
-	Start Time
+	End   time.Time
+	Start time.Time
 }
 
 // UserData contains the data for the user report
@@ -339,7 +339,7 @@ func (wt *WakaTime) GetHartbeats(user string, date time.Time) (*Heartbeats, erro
 	if u, err = url.Parse(APIBase); err != nil {
 		return nil, err
 	}
-	u.Path += "users/" + user
+	u.Path += "users/" + user + "/heartbeats"
 	q := u.Query()
 	q.Set("date", date.Format(dateFormat))
 	u.RawQuery = q.Encode()
@@ -386,5 +386,5 @@ func (wt *WakaTime) fetchURL(url string) ([]byte, error) {
 
 // Time converts Time to time.Time
 func (t Time) Time() time.Time {
-	return time.Time(t)
+    return time.Time(t)
 }
