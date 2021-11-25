@@ -67,7 +67,7 @@ type StatsItem struct {
 	TotalSeconds int `json:"total_seconds"`
 }
 
-// HeartbeatItem contains single hartbeat item
+// HeartbeatItem contains single heartbeat item
 type HeartbeatItem struct {
 	Entity       string
 	Type         string
@@ -332,8 +332,8 @@ func (wt *WakaTime) Users(user string) (*Users, error) {
 	return &us, nil
 }
 
-// GetHartbeats fetches user's heartbeats sent from plugins for the given day
-func (wt *WakaTime) GetHartbeats(user string, date time.Time) (*Heartbeats, error) {
+// GetHeartbeats fetches user's heartbeats sent from plugins for the given day
+func (wt *WakaTime) GetHeartbeats(user string, date time.Time) (*Heartbeats, error) {
 	var err error
 	var u *url.URL
 	if u, err = url.Parse(APIBase); err != nil {

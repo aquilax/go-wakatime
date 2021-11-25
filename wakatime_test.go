@@ -428,7 +428,7 @@ func TestWakatime(t *testing.T) {
 		Convey("Wakatime must not be nil", func() {
 			So(wt, ShouldNotBeNil)
 			Convey("Durations JSON must be correctly parsed", func() {
-				h, err := wt.GetHartbeats(CurrentUser, time.Now())
+				h, err := wt.GetHeartbeats(CurrentUser, time.Now())
 				So(err, ShouldBeNil)
 				So(h, ShouldNotBeNil)
 				So(len(h.Data), ShouldEqual, 2)
